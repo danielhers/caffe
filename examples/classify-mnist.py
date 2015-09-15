@@ -1,3 +1,4 @@
+#!/usr/bin/python2
 import os
 os.chdir('..')
 
@@ -44,4 +45,5 @@ for i, (key, value) in enumerate(lmdb_cursor):
     predicted_label = out['prob'].argmax()
     if label == predicted_label:
         correct += 1
-    print "n=%-5d accuracy=%.3f" % (i + 1, float(correct) / (i + 1))
+    print "n=%-5d accuracy=%.3f label=%d predicted=%d prob=%s" %\
+          (i + 1, float(correct) / (i + 1), label, predicted_label, out['prob'][0])
