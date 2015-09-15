@@ -1,3 +1,6 @@
+#!/usr/bin/python2
+# -*- coding: utf-8 -*-
+
 import os
 os.chdir('../..')
 
@@ -155,22 +158,22 @@ class LeNetClassifier(object):
         return [
             # weights
             vis_square(self.net.params['conv1'][0].data.transpose(0, 2, 3, 1),
-                       title='conv1 filters'),
+                       title=u'משקלי שכבה 1'),
             vis_square(self.net.params['conv2'][0].data[:20].reshape(20**2, 5, 5),
-                       title='conv2 filters'),
+                       title=u'משקלי שכבה 2'),
             # activations
             vis_square(self.net.blobs['conv1'].data[0, :36], padval=1,
-                       title='conv1'),
-            vis_square(self.net.blobs['pool1'].data[0, :36], padval=1,
-                       title='pool1'),
+                       title=u'שכבה 1'),
+            # vis_square(self.net.blobs['pool1'].data[0, :36], padval=1,
+            #            title='pool1'),
             vis_square(self.net.blobs['conv2'].data[0], padval=1,
-                       title='conv2'),
-            vis_square(self.net.blobs['pool2'].data[0], padval=0.5,
-                       title='pool1'),
+                       title=u'שכבה 2'),
+            # vis_square(self.net.blobs['pool2'].data[0], padval=0.5,
+            #            title='pool1'),
             vis_square(self.net.blobs['ip1'].data[0, :400].reshape(1, 20, 20), padval=0.5,
-                       title='ip1'),
+                       title=u'שכבה 3'),
             vis_rec(self.net.blobs['ip2'].data[0].reshape(1, 10),
-                    title='ip2')
+                    title=u'שכבה 4')
         ]
 
 
