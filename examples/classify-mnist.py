@@ -18,7 +18,7 @@ def rgb2gray(rgb):
 
 net = caffe.Net(MODEL_FILE, PRETRAINED, caffe.TEST)
 caffe.set_mode_cpu()
-if sys.argv[1] == "-i":
+if len(sys.argv) > 1 and sys.argv[1] == "-i":
     # Test self-made image
     f = sys.argv[2] if len(sys.argv) > 2 else 'examples/images/3.jpg'
     img = caffe.io.load_image(f, color=False).astype(np.uint8)
@@ -41,7 +41,7 @@ for i, (key, value) in enumerate(lmdb_cursor):
 
     image = caffe.io.datum_to_array(datum).astype(np.uint8)
     out = net.forward_all(data=np.asarray([image]))
-    predicted_label = out['prob'][0].argmax(axis=0)
+    predicted_label = out['prob'].argmax()
     if label == predicted_label:
         correct += 1
     print "n=%-5d accuracy=%.3f" % (i + 1, float(correct) / (i + 1))

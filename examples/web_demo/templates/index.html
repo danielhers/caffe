@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Caffe demos">
+    <meta name="description" content="זיהוי ספרות">
     <meta name="author" content="BVLC (http://bvlc.eecs.berkeley.edu/)">
 
     <title>Caffe Demos</title>
@@ -52,7 +52,7 @@
 
       <div>
         <h2>הדגמת רשת נוירונים לזיהוי ספרות</h2>
-        <a href="/classify_url?imageurl=http%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fen%2Farchive%2Fb%2Fb8%2F20060803095059!Number_3.jpg">
+        <a href="/classify_url?imageurl=https:%2F%2Fwww.classes.cs.uchicago.edu%2Farchive%2F2013%2Fspring%2F12300-1%2Fpa%2Fpa1%2Fdigit.png">
             דוגמא
         </a>
       </div>
@@ -69,7 +69,7 @@
         </a>
         <div class="media-body">
             <h1 class="text-center" style="font-size: 100px">
-              זיהוי הרשת: <strong>{{ result[1][0][0] }}</strong>
+              הספרה: <strong>{{ result[1][0][0] }}</strong>
             </h1>
             <ul class="list-group" style="width: 200px">
               {% for single_pred in result[1] %}
