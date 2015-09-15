@@ -2,10 +2,9 @@ import os
 os.chdir('..')
 
 import sys
-sys.path.insert(0, './python')
+sys.path.insert(0, 'python')
 import caffe
 
-import numpy as np
 from scipy.misc import imresize
 from pylab import *
 import lmdb

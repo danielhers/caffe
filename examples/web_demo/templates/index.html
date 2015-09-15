@@ -8,6 +8,7 @@
 
     <title>Caffe Demos</title>
 
+    <link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Alef">
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
 
     <script type="text/javascript" src="//code.jquery.com/jquery-2.1.1.js"></script>
@@ -31,14 +32,14 @@
 
     <style>
     body {
-      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-family: "Alef", sans-serif;
       line-height:1.5em;
       color: #232323;
       -webkit-font-smoothing: antialiased;
     }
 
     h1, h2, h3 {
-      font-family: Times, serif;
+      font-family: Alef, sans-serif;
       line-height:1.5em;
       border-bottom: 1px solid #ccc;
     }
@@ -47,63 +48,42 @@
 
   <body>
     <!-- Begin page content -->
-    <div class="container">
-      <div class="page-header">
-        <h1><a href="/">Caffe Demos</a></h1>
-        <p>
-          The <a href="http://caffe.berkeleyvision.org">Caffe</a> neural network library makes implementing state-of-the-art computer vision systems easy.
-        </p>
-      </div>
+    <div class="container" dir="rtl">
 
       <div>
-        <h2>Classification</h2>
-        <a href="/classify_url?imageurl=http%3A%2F%2Fi.telegraph.co.uk%2Fmultimedia%2Farchive%2F02351%2Fcross-eyed-cat_2351472k.jpg">Click for a Quick Example</a>
+        <h2>הדגמת רשת נוירונים לזיהוי ספרות</h2>
+        <a href="/classify_url?imageurl=http%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fen%2Farchive%2Fb%2Fb8%2F20060803095059!Number_3.jpg">
+            דוגמא
+        </a>
       </div>
 
       {% if has_result %}
       {% if not result[0] %}
       <!-- we have error in the result. -->
-      <div class="alert alert-danger">{{ result[1] }} Did you provide a valid URL or a valid image file? </div>
+      <div class="alert alert-danger">{{ result[1] }} שגיאה בזיהוי התמונה </div>
       {% else %}
       <div class="media">
-        <a class="pull-left" href="#"><img class="media-object" width="192" height="192" src={{ imagesrc }}></a>
+        <a class="pull-left" href="#">
+            התמונה המקורית:
+            <img class="media-object" width="192" height="192" src={{ imagesrc }}>
+        </a>
         <div class="media-body">
-          <div class="bs-example bs-example-tabs">
-            <ul id="myTab" class="nav nav-tabs">
-              <li class="active"><a href="#infopred" data-toggle="tab">Maximally accurate</a></li>
-              <li><a href="#flatpred" data-toggle="tab">Maximally specific</a></li>
+            <h1 class="text-center" style="font-size: 100px">
+              זיהוי הרשת: <strong>{{ result[1][0][0] }}</strong>
+            </h1>
+            <ul class="list-group" style="width: 200px">
+              {% for single_pred in result[1] %}
+              <li class="list-group-item">
+              <span class="badge">{{ single_pred[1] }}</span>
+              <h4 class="list-group-item-heading text-left">
+                <strong>{{ single_pred[0] }}</strong>
+              </h4>
+              </li>
+              {% endfor %}
             </ul>
-            <div id="myTabContent" class="tab-content">
-              <div class="tab-pane fade in active" id="infopred">
-                <ul class="list-group">
-                  {% for single_pred in result[2] %}
-                  <li class="list-group-item">
-                  <span class="badge">{{ single_pred[1] }}</span>
-                  <h4 class="list-group-item-heading">
-                    <a href="https://www.google.com/#q={{ single_pred[0] }}" target="_blank">{{ single_pred[0] }}</a>
-                  </h4>
-                  </li>
-                  {% endfor %}
-                </ul>
-              </div>
-              <div class="tab-pane fade" id="flatpred">
-                <ul class="list-group">
-                  {% for single_pred in result[1] %}
-                  <li class="list-group-item">
-                  <span class="badge">{{ single_pred[1] }}</span>
-                  <h4 class="list-group-item-heading">
-                    <a href="https://www.google.com/#q={{ single_pred[0] }}" target="_blank">{{ single_pred[0] }}</a>
-                  </h4>
-                  </li>
-                  {% endfor %}
-                </ul>
-              </div>
-            </div>
-          </div>
-
         </div>
       </div>
-      <p> CNN took {{ result[3] }} seconds. </p>
+      <p> הזמן שלקח לזיהוי: {{ result[2] }} שניות. </p>
       {% endif %}
       <hr>
       {% endif %}
@@ -111,9 +91,9 @@
       <form role="form" action="classify_url" method="get">
         <div class="form-group">
           <div class="input-group">
-            <input type="text" class="form-control" name="imageurl" id="imageurl" placeholder="Provide an image URL">
+            <input type="text" class="form-control" name="imageurl" id="imageurl" placeholder="כתובת התמונה">
             <span class="input-group-btn">
-              <input class="btn btn-primary" value="Classify URL" type="submit" id="classifyurl"></input>
+              <input class="btn btn-primary" value="זהה תמונה לפי כתובת" type="submit" id="classifyurl"></input>
             </span>
           </div><!-- /input-group -->
         </div>
@@ -121,7 +101,7 @@
 
       <form id="formupload" class="form-inline" role="form" action="classify_upload" method="post" enctype="multipart/form-data">
         <div class="form-group">
-          <label for="imagefile">Or upload an image:</label>
+          <label for="imagefile">העלה תמונה:</label>
           <input type="file" name="imagefile" id="imagefile">
         </div>
         <!--<input type="submit" class="btn btn-primary" value="Classify File" id="classifyfile"></input>-->
@@ -129,10 +109,5 @@
     </div>
 
     <hr>
-    <div id="footer">
-      <div class="container">
-        <p>&copy; BVLC 2014</p>
-      </div>
-   </div>
  </body>
 </html>
