@@ -6,7 +6,6 @@ sys.path.insert(0, 'python')
 import caffe
 
 import time
-import cPickle
 import datetime
 import logging
 import flask
@@ -15,7 +14,8 @@ import optparse
 import tornado.wsgi
 import tornado.httpserver
 import numpy as np
-import pandas as pd
+import matplotlib.pyplot as plt
+import mpld3
 from PIL import Image
 import cStringIO as StringIO
 import urllib
@@ -24,6 +24,10 @@ import exifutil
 REPO_DIRNAME = os.path.abspath(os.path.dirname(os.path.abspath(__file__)) + '/../..')
 UPLOAD_FOLDER = '/tmp/caffe_demos_uploads'
 ALLOWED_IMAGE_EXTENSIONS = set(['png', 'bmp', 'jpg', 'jpe', 'jpeg', 'gif'])
+
+plt.rcParams['figure.figsize'] = (10, 10)
+plt.rcParams['image.interpolation'] = 'nearest'
+plt.rcParams['image.cmap'] = 'gray'
 
 # Obtain the flask app object
 app = flask.Flask(__name__)
@@ -141,12 +145,33 @@ class LeNetClassifier(object):
             ]
             logging.info('result: %s', str(meta))
 
-            return True, meta, '%.3f' % (endtime - starttime)
+            return True, meta, '%.3f' % (endtime - starttime), self.plots()
 
         except Exception as err:
             logging.info('Classification error: %s', err)
-            return (False, 'Something went wrong when classifying the '
-                           'image. Maybe try another one?')
+            return False, err.message
+
+    def plots(self):
+        return [
+            # weights
+            vis_square(self.net.params['conv1'][0].data.transpose(0, 2, 3, 1),
+                       title='conv1 filters'),
+            vis_square(self.net.params['conv2'][0].data[:20].reshape(20**2, 5, 5),
+                       title='conv2 filters'),
+            # activations
+            vis_square(self.net.blobs['conv1'].data[0, :36], padval=1,
+                       title='conv1'),
+            vis_square(self.net.blobs['pool1'].data[0, :36], padval=1,
+                       title='pool1'),
+            vis_square(self.net.blobs['conv2'].data[0], padval=1,
+                       title='conv2'),
+            vis_square(self.net.blobs['pool2'].data[0], padval=0.5,
+                       title='pool1'),
+            vis_square(self.net.blobs['ip1'].data[0, :400].reshape(1, 20, 20), padval=0.5,
+                       title='ip1'),
+            vis_rec(self.net.blobs['ip2'].data[0].reshape(1, 10),
+                    title='ip2')
+        ]
 
 
 def start_tornado(app, port=5000):
@@ -188,8 +213,48 @@ def start_from_terminal(app):
         start_tornado(app, opts.port)
 
 
+# take an array of shape (n, height, width) or (n, height, width, channels)
+# and visualize each (height, width) thing in a grid of size approx. sqrt(n) by sqrt(n)
+def vis_square(data, padsize=1, padval=0, title=None):
+    data = data.copy()
+    data -= data.min()
+    data /= data.max()
+
+    # force the number of filters to be square
+    n = int(np.ceil(np.sqrt(data.shape[0])))
+    padding = ((0, n ** 2 - data.shape[0]), (0, padsize), (0, padsize)) + ((0, 0),) * (data.ndim - 3)
+    data = np.pad(data, padding, mode='constant', constant_values=(padval, padval))
+
+    # tile the filters into an image
+    data = data.reshape((n, n) + data.shape[1:]).transpose((0, 2, 1, 3) + tuple(range(4, data.ndim + 1)))
+    data = data.reshape((n * data.shape[1], n * data.shape[3]) + data.shape[4:])
+    data = data.squeeze()
+
+    plt.figure()
+    plt.imshow(data)
+    if title:
+        plt.title(title)
+
+    return title, mpld3.fig_to_html(plt.gcf())
+
+
+def vis_rec(data, title=None):
+    data = data.copy()
+    data -= data.min()
+    data /= data.max()
+
+    plt.figure()
+    plt.xticks(np.arange(0, 10, 1.0))
+    plt.imshow(data)
+    if title:
+        plt.title(title)
+
+    return title, mpld3.fig_to_html(plt.gcf())
+
+
 def rgb2gray(rgb):
     return 1-np.dot(rgb[..., :3], [0.299, 0.587, 0.144])[..., None]
+
 
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.INFO)

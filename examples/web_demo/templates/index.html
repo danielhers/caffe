@@ -52,24 +52,17 @@
 
       <div>
         <h2>הדגמת רשת נוירונים לזיהוי ספרות</h2>
-        <a href="/classify_url?imageurl=https:%2F%2Fwww.classes.cs.uchicago.edu%2Farchive%2F2013%2Fspring%2F12300-1%2Fpa%2Fpa1%2Fdigit.png">
-            דוגמא
-        </a>
       </div>
 
       {% if has_result %}
       {% if not result[0] %}
       <!-- we have error in the result. -->
-      <div class="alert alert-danger">{{ result[1] }} שגיאה בזיהוי התמונה </div>
+      <div class="alert alert-danger"><p>שגיאה בזיהוי התמונה</p><p dir="ltr">{{ result[1] }}</p></div>
       {% else %}
       <div class="media">
-        <a class="pull-left" href="#">
-            התמונה המקורית:
-            <img class="media-object" width="192" height="192" src={{ imagesrc }}>
-        </a>
-        <div class="media-body">
+        <div class="col-sm-6 pull-right media-body">
             <h1 class="text-center" style="font-size: 100px">
-              הספרה: <strong>{{ result[1][0][0] }}</strong>
+              הספרה: <strong style="font-size: 130px">{{ result[1][0][0] }}</strong>
             </h1>
             <ul class="list-group" style="width: 200px">
               {% for single_pred in result[1] %}
@@ -82,32 +75,46 @@
               {% endfor %}
             </ul>
         </div>
+        <div class="col-sm-4 pull-left">
+          התמונה המקורית:
+          <img class="media-object" width="192" height="192" style="border:1px solid black" src={{ imagesrc }}>
+          לבחירת תמונה חדשה:
+          <form style="width: 192px" role="form" action="classify_url" method="get">
+            <div class="form-group">
+              <div class="input-group">
+                <input type="text" class="form-control" name="imageurl" id="imageurl" placeholder="כתובת התמונה">
+                <span class="input-group-btn">
+                  <input class="btn btn-primary" value="זהה" type="submit" id="classifyurl"></input>
+                </span>
+              </div><!-- /input-group -->
+            </div>
+          </form>
+
+          <form id="formupload" class="form-inline" role="form" action="classify_upload" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+              <label for="imagefile">העלה תמונה:</label>
+              <input type="file" name="imagefile" id="imagefile">
+            </div>
+            <!--<input type="submit" class="btn btn-primary" value="Classify File" id="classifyfile"></input>-->
+          </form>
+
+          <a href="/classify_url?imageurl=https:%2F%2Fwww.classes.cs.uchicago.edu%2Farchive%2F2013%2Fspring%2F12300-1%2Fpa%2Fpa1%2Fdigit.png">
+              דוגמא
+          </a>
+        </div>
       </div>
+
       <p> הזמן שלקח לזיהוי: {{ result[2] }} שניות. </p>
-      {% endif %}
-      <hr>
-      {% endif %}
 
-      <form role="form" action="classify_url" method="get">
-        <div class="form-group">
-          <div class="input-group">
-            <input type="text" class="form-control" name="imageurl" id="imageurl" placeholder="כתובת התמונה">
-            <span class="input-group-btn">
-              <input class="btn btn-primary" value="זהה תמונה לפי כתובת" type="submit" id="classifyurl"></input>
-            </span>
-          </div><!-- /input-group -->
-        </div>
-      </form>
-
-      <form id="formupload" class="form-inline" role="form" action="classify_upload" method="post" enctype="multipart/form-data">
-        <div class="form-group">
-          <label for="imagefile">העלה תמונה:</label>
-          <input type="file" name="imagefile" id="imagefile">
-        </div>
-        <!--<input type="submit" class="btn btn-primary" value="Classify File" id="classifyfile"></input>-->
-      </form>
+      <div class="center">
+      {% for plot in result[3] %}
+          <h3>{{ plot[0] }}</h3>
+          <div>{{ plot[1]|safe }}</div>
+      {% endfor %}
+      </div>
+      {% endif %}
+      {% endif %}
     </div>
 
-    <hr>
  </body>
 </html>

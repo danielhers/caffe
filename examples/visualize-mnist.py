@@ -12,7 +12,7 @@ import lmdb
 
 MODEL_FILE = 'examples/mnist/lenet.prototxt'
 PRETRAINED = 'examples/mnist/lenet_iter_10000.caffemodel'
-SHOW = False
+SHOW = True
 
 
 plt.rcParams['figure.figsize'] = (10, 10)
@@ -53,6 +53,7 @@ net = caffe.Net(MODEL_FILE, PRETRAINED, caffe.TEST)
 vis_square(net.params['conv1'][0].data.transpose(0, 2, 3, 1), t='conv1 filters')
 vis_square(net.params['conv2'][0].data[:20].reshape(20**2, 5, 5), t='conv2 filters')
 
+
 def forward(image):
     out = net.forward_all(data=np.asarray([image]))
     vis_square(net.blobs['conv1'].data[0, :36], padval=1, t='conv1')
@@ -90,7 +91,7 @@ for i, (key, value) in enumerate(lmdb_cursor):
     label = int(datum.label)
 
     image = caffe.io.datum_to_array(datum).astype(np.uint8)
-    out = net.forward_all(data=np.asarray([image]))
+    out = forward(image)
     predicted_label = out['prob'].argmax()
     if label == predicted_label:
         correct += 1
