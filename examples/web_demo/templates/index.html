@@ -45,7 +45,7 @@
       <div class="alert alert-danger"><p>שגיאה בזיהוי התמונה</p><p dir="ltr">{{ result[1] }}</p></div>
       {% endif %}
       <div class="media row">
-				<div class="col-xs-3">
+				<div class="col-md-3">
 					<div id="qrcode"></div>
 					<script type="text/javascript">
 					var node = document.getElementById("qrcode");
@@ -58,7 +58,7 @@
 					</script>
 				</div>
 
-        <div class="col-xs-3">
+        <div class="col-md-3">
 					<div style="border: 1px solid; width: 200px; text-align: center;">
 						<a href="/classify_url?imageurl=https:%2F%2Fwww.classes.cs.uchicago.edu%2Farchive%2F2013%2Fspring%2F12300-1%2Fpa%2Fpa1%2Fdigit.png">
 								[דוגמא]
@@ -90,7 +90,7 @@
 						התמונה המקורית:
 						<img class="media-object" width="192" height="192" style="border:1px solid black" src={{ imagesrc }}>
 				</div>
-        <div class="col-xs-6 media-body">
+        <div class="col-md-6 media-body">
             <h1 class="text-center" style="font-size: 100px">
               הספרה: <strong style="font-size: 130px">{{ result[1][0][0] }}</strong>
             </h1>
