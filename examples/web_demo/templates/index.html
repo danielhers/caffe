@@ -13,6 +13,7 @@
     <script type="text/javascript" src="//code.jquery.com/jquery-2.1.1.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
     <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script type="text/javascript" src="{{ url_for('static', filename='qrcode.min.js') }}"></script>
 
     <!-- Script to instantly classify an image once it is uploaded. -->
     <script type="text/javascript">
@@ -44,7 +45,20 @@
       <div class="alert alert-danger"><p>שגיאה בזיהוי התמונה</p><p dir="ltr">{{ result[1] }}</p></div>
       {% endif %}
       <div class="media row">
-        <div class="col-xs-4">
+				<div class="col-xs-3">
+					<div id="qrcode"></div>
+					<script type="text/javascript">
+					var node = document.getElementById("qrcode");
+					try {
+						new QRCode(node, "{{ request.url }}");
+					} catch(err) {
+						while (node.hasChildNodes()) { node.removeChild(node.lastChild); }
+						new QRCode(node, "{{ request.url_root }}");
+					}
+					</script>
+				</div>
+
+        <div class="col-xs-3">
 					<div style="border: 1px solid; width: 200px; text-align: center;">
 						<a href="/classify_url?imageurl=https:%2F%2Fwww.classes.cs.uchicago.edu%2Farchive%2F2013%2Fspring%2F12300-1%2Fpa%2Fpa1%2Fdigit.png">
 								[דוגמא]
@@ -76,7 +90,7 @@
 						התמונה המקורית:
 						<img class="media-object" width="192" height="192" style="border:1px solid black" src={{ imagesrc }}>
 				</div>
-        <div class="col-xs-8 media-body">
+        <div class="col-xs-6 media-body">
             <h1 class="text-center" style="font-size: 100px">
               הספרה: <strong style="font-size: 130px">{{ result[1][0][0] }}</strong>
             </h1>

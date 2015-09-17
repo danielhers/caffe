@@ -39,7 +39,7 @@ app = flask.Flask(__name__)
 
 
 @app.route('/')
-def index():
+def index(request):
     return flask.render_template('index.html', has_result=False)
 
 
@@ -51,8 +51,6 @@ def draw():
 @app.route('/classify_url', methods=['GET'])
 def classify_url():
     imageurl = flask.request.args.get('imageurl', '')
-		if not imageurl:
-				return index()
     try:
         string_buffer = StringIO.StringIO(
             urllib.urlopen(imageurl).read())
