@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="זיהוי ספרות">
+
+    <link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Alef">
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+
+    <script type="text/javascript" src="//code.jquery.com/jquery-2.1.1.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>ציור ספרות</title>
+  </head>
+
+  <body>
+		<div style="text-align: center; padding: 5px;">
+			<div id="canvas" class="canvas" style="margin: auto; width: 405px;"></div>
+			<form action="classify_url" method="get">
+				<input name="imageurl" type="hidden" id="imageurl">
+				<input class="btn btn-primary" value="זהה" type="submit"></input>
+			</form>
+		</div>
+
+		<script type="text/javascript">
+		(function() {
+				// Creates a new canvas element and appends it as a child
+				// to the parent element, and returns the reference to
+				// the newly created canvas element
+
+
+				function createCanvas(parent, width, height) {
+						var canvas = {};
+						canvas.node = document.createElement('canvas');
+						canvas.context = canvas.node.getContext('2d');
+						canvas.node.width = width || 100;
+						canvas.node.height = height || 100;
+						parent.appendChild(canvas.node);
+						return canvas;
+				}
+
+				function init(container, width, height, fillColor) {
+						var canvas = createCanvas(container, width, height);
+						var ctx = canvas.context;
+						// define a custom fillCircle method
+						ctx.fillCircle = function(x, y, radius, fillColor) {
+								this.fillStyle = fillColor;
+								this.beginPath();
+								this.moveTo(x, y);
+								this.arc(x, y, radius, 0, Math.PI * 2, false);
+								this.fill();
+						};
+						ctx.clearTo = function(fillColor) {
+								ctx.fillStyle = fillColor;
+								ctx.fillRect(0, 0, width, height);
+						};
+						ctx.clearTo(fillColor || "#ddd");
+
+						// bind mouse events
+						canvas.node.onmousemove = function(e) {
+								if (!canvas.isDrawing) {
+									 return;
+								}
+								var x = e.pageX - this.offsetLeft;
+								var y = e.pageY - this.offsetTop;
+								var radius = 15; // or whatever
+								var fillColor = 'black';
+								ctx.fillCircle(x, y, radius, fillColor);
+								document.getElementById("imageurl").value = canvas.node.toDataURL("image/png");
+						};
+						canvas.node.onmousedown = function(e) {
+								canvas.isDrawing = true;
+						};
+						canvas.node.onmouseup = function(e) {
+								canvas.isDrawing = false;
+						};
+				}
+
+				var container = document.getElementById('canvas');
+				init(container, 400, 400, 'white');
+		})();
+		</script>
+
+  </body>
+</html>

@@ -1,11 +1,12 @@
 #!/usr/bin/python2
 # -*- coding: utf-8 -*-
 
-import os
-os.chdir('../..')
+import matplotlib
+matplotlib.use('Agg')
 
+import os
 import sys
-sys.path.insert(0, 'python')
+sys.path.insert(0, '../../python')
 import caffe
 
 import time
@@ -25,6 +26,7 @@ import urllib
 import exifutil
 
 REPO_DIRNAME = os.path.abspath(os.path.dirname(os.path.abspath(__file__)) + '/../..')
+print "REPO_DIRNAME=" + REPO_DIRNAME
 UPLOAD_FOLDER = '/tmp/caffe_demos_uploads'
 ALLOWED_IMAGE_EXTENSIONS = set(['png', 'bmp', 'jpg', 'jpe', 'jpeg', 'gif'])
 
@@ -39,6 +41,11 @@ app = flask.Flask(__name__)
 @app.route('/')
 def index():
     return flask.render_template('index.html', has_result=False)
+
+
+@app.route('/draw')
+def draw():
+    return flask.render_template('draw.html')
 
 
 @app.route('/classify_url', methods=['GET'])
