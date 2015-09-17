@@ -39,7 +39,7 @@ app = flask.Flask(__name__)
 
 
 @app.route('/')
-def index(request):
+def index(request=flask.request):
     return flask.render_template('index.html', has_result=False)
 
 

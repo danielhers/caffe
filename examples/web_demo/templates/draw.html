@@ -60,21 +60,39 @@
 						ctx.clearTo(fillColor || "#ddd");
 
 						// bind mouse events
-						canvas.node.onmousemove = function(e) {
+						canvas.node.ontouchmove = canvas.node.onmousemove = function(e) {
 								if (!canvas.isDrawing) {
 									 return;
 								}
-								var x = e.pageX - this.offsetLeft;
-								var y = e.pageY - this.offsetTop;
+								var pageX = e.pageX;
+								if (!pageX) {
+										if (e.originalEvent && e.originalEvent.touches) {
+												pageX = e.originalEvent.touches[0].pageX;
+										}
+										else if (e.touches && e.touches.length > 0) {
+												pageX = e.touches[0].pageX;
+										}
+								}
+								var pageY = e.pageY;
+								if (!pageY) {
+										if (e.originalEvent && e.originalEvent.touches) {
+												pageY = e.originalEvent.touches[0].pageY;
+										}
+										else if (e.touches && e.touches.length > 0) {
+												pageY = e.touches[0].pageY;
+										}
+								}
+								var x = pageX - this.offsetLeft;
+								var y = pageY - this.offsetTop;
 								var radius = 15; // or whatever
 								var fillColor = 'black';
 								ctx.fillCircle(x, y, radius, fillColor);
 								document.getElementById("imageurl").value = canvas.node.toDataURL("image/png");
 						};
-						canvas.node.onmousedown = function(e) {
+						canvas.node.ontouchstart = canvas.node.onmousedown = function(e) {
 								canvas.isDrawing = true;
 						};
-						canvas.node.onmouseup = function(e) {
+						canvas.node.ontouchend = canvas.node.onmouseup = function(e) {
 								canvas.isDrawing = false;
 						};
 				}
