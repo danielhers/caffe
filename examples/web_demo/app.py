@@ -51,6 +51,8 @@ def draw():
 @app.route('/classify_url', methods=['GET'])
 def classify_url():
     imageurl = flask.request.args.get('imageurl', '')
+		if not imageurl:
+				return index()
     try:
         string_buffer = StringIO.StringIO(
             urllib.urlopen(imageurl).read())

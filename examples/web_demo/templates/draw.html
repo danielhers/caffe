@@ -15,11 +15,13 @@
   </head>
 
   <body>
-		<div style="text-align: center; padding: 5px;">
+		<div style="text-align: center; padding: 5px;" dir="rtl">
+			נסו לצייר את הספרה כך שתמלא את הריבוע:
 			<div id="canvas" class="canvas" style="margin: auto; width: 405px;"></div>
 			<form action="classify_url" method="get">
 				<input name="imageurl" type="hidden" id="imageurl">
-				<input class="btn btn-primary" value="זהה" type="submit"></input>
+				<input class="btn btn-primary" value="זהה" type="submit"/>
+				<a href="/"><input class="btn btn-default" value="ביטול" type="button"/></a>
 			</form>
 		</div>
 
