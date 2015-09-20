@@ -11,6 +11,8 @@
     <script type="text/javascript" src="{{ url_for('static', filename='jquery-2.1.1.js') }}"></script>
     <script type="text/javascript"src="{{ url_for('static', filename='bootstrap.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='qrcode.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='d3.v3.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='mpld3.v0.2.js') }}"></script>
 
     <title>הדגמת רשת נוירונים לזיהוי ספרות</title>
 
@@ -58,17 +60,19 @@
 				</div>
 
         <div class="col-md-3">
-					<div style="border: 1px solid; width: 200px; text-align: center;">
+					<div style="border: 1px dotted; width: 192px; text-align: center;">
+						{#
             <a href="/classify_url?imageurl=static/4.png"
                title="לתמונה מוכנה מראש כדי לראות איך הרשת עובדת">
 								[דוגמא]
 						</a>
+						#}
 
 						<form action="draw" style="padding: 5px;">
-							<input class="btn btn-primary" value="צייר תמונה" type="submit" id="draw" style="width: 100%;"
-                     title="לציור ספרה משלך שהרשת תנסה לזהות"></input>
+							<input class="btn btn-primary" value="ציירו תמונה" type="submit" id="draw" style="width: 100%;" title="לציור ספרה משלך שהרשת תנסה לזהות"></input>
 						</form>
 
+						{#
 						<form style="width: 192px" role="form" action="classify_url" method="get">
 							<div class="form-group" title="לבחירת תמונה מהאינטרנט שמכילה ספרה">
 								<div class="input-group">
@@ -79,9 +83,11 @@
 								</div><!-- /input-group -->
 							</div>
 						</form>
+						#}
 
-						<form id="formupload" class="form-inline" role="form" action="classify_upload" method="post" enctype="multipart/form-data">
-							<div class="form-group" title="לבחירת תמונה מהמחשב של ספרה">
+						<form id="formupload" class="form-inline" role="form" action="classify_upload" method="post" enctype="multipart/form-data" style="padding: 5px;">
+							<div class="btn btn-default btn-file form-group" style="width: 100%;" title="לבחירת תמונה מהמחשב של ספרה">
+								צלמו תמונה
 								<input type="file" name="imagefile" id="imagefile">
 							</div>
 						</form>
@@ -109,13 +115,24 @@
       </div>
       <p> הזמן שלקח לזיהוי: {{ result[2] }} שניות. </p>
 
-      <div class="center">
-      {% for plot in result[3] %}
-          <div>{{ plot[1]|safe }}</div>
-      {% endfor %}
-      </div>
-      {% endif %}
+			<table class="table">
+		{% for plots in result[3] %}
+				<tr>
+		{% for plot in plots %}
+					<td id="{{ plot['id'] }}"></td>
+		{% endfor %}
+				</tr>
+		{% endfor %}
+			</table>
     </div>
+		<script type="text/javascript">
+		{% for plots in result[3] %}
+		{% for plot in plots %}
+		mpld3.draw_figure("{{ plot['id'] }}", {{ plot['json']|safe }}); 
+		{% endfor %}
+		{% endfor %}
+		</script>
+		{% endif %}
 
  </body>
 </html>

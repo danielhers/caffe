@@ -24,6 +24,7 @@ from PIL import Image
 import cStringIO as StringIO
 import urllib
 import exifutil
+import json
 
 REPO_DIRNAME = os.path.abspath(os.path.dirname(os.path.abspath(__file__)) + '/../..')
 print "REPO_DIRNAME=" + REPO_DIRNAME
@@ -166,26 +167,32 @@ class LeNetClassifier(object):
             return False, err.message
 
     def plots(self):
-        return [
-            # weights
+        return (
+            # layer 1 weights + activations
+            (
+            vis_square(self.net.blobs['conv1'].data[0, :36],
+											 "conv1", padval=1, title=u'שכבה 1'),
             vis_square(self.net.params['conv1'][0].data.transpose(0, 2, 3, 1),
-                       title=u'משקלי שכבה 1'),
+                       "conv1_weights", title=u'משקלי שכבה 1'),
+            ),
+            # layer 2 weights + activations
+            (
+            vis_square(self.net.blobs['conv2'].data[0],
+											 "conv2", padval=1, title=u'שכבה 2'),
             vis_square(self.net.params['conv2'][0].data[:20].reshape(20**2, 5, 5),
-                       title=u'משקלי שכבה 2'),
-            # activations
-            vis_square(self.net.blobs['conv1'].data[0, :36], padval=1,
-                       title=u'שכבה 1'),
-            # vis_square(self.net.blobs['pool1'].data[0, :36], padval=1,
-            #            title='pool1'),
-            vis_square(self.net.blobs['conv2'].data[0], padval=1,
-                       title=u'שכבה 2'),
-            # vis_square(self.net.blobs['pool2'].data[0], padval=0.5,
-            #            title='pool1'),
-            vis_square(self.net.blobs['ip1'].data[0, :400].reshape(1, 20, 20), padval=0.5,
-                       title=u'שכבה 3'),
+                       "conv2_weights", title=u'משקלי שכבה 2'),
+            ),
+            # layer 3 activations
+            (
+            vis_square(self.net.blobs['ip1'].data[0, :400].reshape(1, 20, 20),
+											 "ip1", padval=0.5, title=u'שכבה 3'),
+            ),
+            # layer 4 activations
+            (
             vis_rec(self.net.blobs['ip2'].data[0].reshape(1, 10),
-                    title=u'שכבה 4')
-        ]
+                    "ip2", title=u'שכבה 4'),
+            ),
+        )
 
 
 def start_tornado(app, port=5000):
@@ -229,7 +236,7 @@ def start_from_terminal(app):
 
 # take an array of shape (n, height, width) or (n, height, width, channels)
 # and visualize each (height, width) thing in a grid of size approx. sqrt(n) by sqrt(n)
-def vis_square(data, padsize=1, padval=0, title=None):
+def vis_square(data, fig_id, padsize=1, padval=0, title=None):
     data = data.copy()
     data -= data.min()
     data /= data.max()
@@ -245,25 +252,30 @@ def vis_square(data, padsize=1, padval=0, title=None):
     data = data.squeeze()
 
     plt.figure()
+    plt.xticks([])
+    plt.yticks([])
     plt.imshow(data)
     if title:
         plt.title(title)
+    plt.tight_layout()
 
-    return title, mpld3.fig_to_html(plt.gcf())
+    return {'id': fig_id, 'json': json.dumps(mpld3.fig_to_dict(plt.gcf()))}
 
 
-def vis_rec(data, title=None):
+def vis_rec(data, fig_id, title=None):
     data = data.copy()
     data -= data.min()
     data /= data.max()
 
     plt.figure()
     plt.xticks(np.arange(0, 10, 1.0))
+    plt.yticks([])
     plt.imshow(data)
     if title:
         plt.title(title)
+    plt.tight_layout()
 
-    return title, mpld3.fig_to_html(plt.gcf())
+    return {'id': fig_id, 'json': json.dumps(mpld3.fig_to_dict(plt.gcf()))}
 
 
 def rgb2gray(rgb):
