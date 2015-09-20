@@ -37,10 +37,12 @@ plt.rcParams['image.cmap'] = 'gray'
 # Obtain the flask app object
 app = flask.Flask(__name__)
 
+SERVER_URL_ROOT = "http://46.101.154.90:5000/"
+
 
 @app.route('/')
 def index(request=flask.request):
-    return flask.render_template('index.html', has_result=False)
+    return flask.render_template('index.html', has_result=False, url=SERVER_URL_ROOT)
 
 
 @app.route('/draw')
@@ -62,13 +64,15 @@ def classify_url():
         logging.info('URL Image open error: %s', err)
         return flask.render_template(
             'index.html', has_result=True,
-            result=(False, 'Cannot open image from URL.')
+            result=(False, 'Cannot open image from URL.'),
+            url=SERVER_URL_ROOT
         )
 
     logging.info('Image: %s', imageurl)
     result = app.clf.classify_image(image)
     return flask.render_template(
-        'index.html', has_result=True, result=result, imagesrc=imageurl)
+        'index.html', has_result=True, result=result, imagesrc=imageurl,
+        url=SERVER_URL_ROOT)
 
 
 @app.route('/classify_upload', methods=['POST'])

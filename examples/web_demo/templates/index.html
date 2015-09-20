@@ -5,15 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="זיהוי ספרות">
 
-    <title>הדגמת רשת נוירונים לזיהוי ספרות</title>
+    <link type="text/css" href="{{ url_for('static', filename='bootstrap.min.css') }}" rel="stylesheet">
+    <link type="text/css" href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
 
-    <link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Alef">
-    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
-
-    <script type="text/javascript" src="//code.jquery.com/jquery-2.1.1.js"></script>
-    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
-    <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script type="text/javascript" src="{{ url_for('static', filename='jquery-2.1.1.js') }}"></script>
+    <script type="text/javascript"src="{{ url_for('static', filename='bootstrap.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='qrcode.min.js') }}"></script>
+
+    <title>הדגמת רשת נוירונים לזיהוי ספרות</title>
 
     <!-- Script to instantly classify an image once it is uploaded. -->
     <script type="text/javascript">
@@ -49,27 +48,29 @@
 					<div id="qrcode"></div>
 					<script type="text/javascript">
 					var node = document.getElementById("qrcode");
-					try {
-						new QRCode(node, "{{ request.url }}");
+          try {
+            new QRCode(node, "{{ url + 'classify_url?imageurl=' + imagesrc if url is defined and imagesrc is defined else request.url }}");
 					} catch(err) {
 						while (node.hasChildNodes()) { node.removeChild(node.lastChild); }
-						new QRCode(node, "{{ request.url_root }}");
+            new QRCode(node, "{{ url if url is defined else request.url_root }}");
 					}
 					</script>
 				</div>
 
         <div class="col-md-3">
 					<div style="border: 1px solid; width: 200px; text-align: center;">
-						<a href="/classify_url?imageurl=https:%2F%2Fwww.classes.cs.uchicago.edu%2Farchive%2F2013%2Fspring%2F12300-1%2Fpa%2Fpa1%2Fdigit.png">
+            <a href="/classify_url?imageurl=static/4.png"
+               title="לתמונה מוכנה מראש כדי לראות איך הרשת עובדת">
 								[דוגמא]
 						</a>
 
 						<form action="draw" style="padding: 5px;">
-							<input class="btn btn-primary" value="צייר תמונה" type="submit" id="draw" style="width: 100%;"></input>
+							<input class="btn btn-primary" value="צייר תמונה" type="submit" id="draw" style="width: 100%;"
+                     title="לציור ספרה משלך שהרשת תנסה לזהות"></input>
 						</form>
 
 						<form style="width: 192px" role="form" action="classify_url" method="get">
-							<div class="form-group">
+							<div class="form-group" title="לבחירת תמונה מהאינטרנט שמכילה ספרה">
 								<div class="input-group">
 									<input type="text" class="form-control" name="imageurl" id="imageurl" placeholder="כתובת התמונה">
 									<span class="input-group-btn">
@@ -80,7 +81,7 @@
 						</form>
 
 						<form id="formupload" class="form-inline" role="form" action="classify_upload" method="post" enctype="multipart/form-data">
-							<div class="form-group">
+							<div class="form-group" title="לבחירת תמונה מהמחשב של ספרה">
 								<input type="file" name="imagefile" id="imagefile">
 							</div>
 						</form>
